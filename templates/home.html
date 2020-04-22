@@ -470,23 +470,32 @@ section.body {
 {% set item_2 = post_picture[loop.index-1]%}
 
 
-  <div class="card mb-3" style="max-width: 540px;">
-  <div class="row no-gutters">
+    <div class="col-md-4" style="max-width: 540px;" >
+      <div class="thumbnail" style="border:2px solid #cecece;">
+        <a>
+          <img src="{{url_for('static', filename = item_2 ) }}" alt="Lights" style="width:100%">
+          <div class="card-body" >
+          <p  class="card-title"> <h3> <strong>{{item_1.title}}</strong> </h3> </p>
+        <p  class="card-title">by <font color="blue">  {{ item_1.author }}  </font>, <small class="text-muted">{{  post.date_posted.strftime('%Y-%m-%d')}}</small> </p>
 
-    <div class="col-md-4">
+        <blockquote>
 
-      <img src="{{url_for('static', filename = item_2 ) }}" style='height: 100%; width: 100%; ' class="card-img" alt="Responsive image">
-    </div>
-    <div class="col-md-8">
-      <div class="card-body">
-        <p  class="card-title"> <font color="blue"><strong> {{ item_1.author }} </strong> </font> </p>
-        <h4 class="card-text">{{  item_1.caption }}</h4>
-        <p class="card-text"><small class="text-muted">{{  item_1.date_posted.strftime('%Y-%m-%d')}}</small></p>
+        {{  item_1.caption }}
+
+
+  </blockquote>
+
+
+
+      </div>
+        </a>
+
       </div>
     </div>
-  </div>
-</div>
 
+
+<br>
+<br>
 
 
       {% endfor %}
