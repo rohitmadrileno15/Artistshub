@@ -6,3 +6,11 @@ open python on cmd, type in:-
 ##this creates all the neccessary tables in the database
 ##we have used  sql alchemy here to line up our database, this helps to form our tables in the database using py classes
 >>exit()
+
+
+Also, turn debug mode off while using the app for best results.
+
+And, to run it,
+open the foler in cmd, and then > python app.py
+
+This will run the site on port 5000
