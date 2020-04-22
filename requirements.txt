@@ -1,0 +1,8 @@
+Before starting the file on localhost,
+open python on cmd, type in:-
+>>from app import db
+##db is the name of the sqlite database in the app
+>>db.create_all()
+##this creates all the neccessary tables in the database
+##we have used  sql alchemy here to line up our database, this helps to form our tables in the database using py classes
+>>exit()
