@@ -1,17 +1,22 @@
-import secrets
-from flask import Flask,redirect, url_for,render_template, request,session,flash,request
+
+# A very simple Flask Hello World app for you to get started with...
+
+from flask import Flask
+import random
+import random,string
+from flask import Flask,redirect, url_for,render_template, request,session,flash
 import os
 from flask_sqlalchemy import SQLAlchemy
 
 from datetime import datetime
-from flask_bcrypt import Bcrypt
+
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField , FileAllowed
 from wtforms import StringField , PasswordField,SubmitField
 from wtforms.validators import DataRequired,Length, Email , EqualTo, ValidationError
 from flask_login import LoginManager, UserMixin, login_user,current_user,logout_user,login_required
 
-
+from wtforms.widgets import TextArea
 
 
 
@@ -20,11 +25,13 @@ from flask_login import LoginManager, UserMixin, login_user,current_user,logout_
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = 'SECRET'
+app.config['SECRET_KEY'] = '450933c08c5ab75e79619102eddf47dee813a9d6'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 
 db = SQLAlchemy(app)
+
+
 
 login_manager = LoginManager(app)
 
@@ -36,15 +43,18 @@ class User(db.Model , UserMixin):
     email = db.Column(db.String(120), unique= True, nullable = False)
 
     password = db.Column(db.String(60), nullable = False)
+    #posts = db.relationship("Post", backref = 'author' , lazy = True)
 
 
     def __repr__(self):
-        return f"User('{self.username}','{self.email}')"
+        a = User('{self.username}','{self.email}')
+        return (a)
 
 
 class Post(db.Model):
     id = db.Column(db.Integer,primary_key= True)
-    caption = db.Column(db.String(50), nullable = False)
+    title = db.Column(db.String(300), nullable = True)
+    caption = db.Column(db.String(3400), nullable = False)
     picture = db.Column(db.String(300))
     author = db.Column(db.String(50), nullable = False)
     date_posted = db.Column(db.DateTime, default = datetime.utcnow )
@@ -53,7 +63,7 @@ class Post(db.Model):
 
 
     def __repr__(self):
-        return f"Post('{self.caption}','{self.picture}','{self.date_posted}')"
+        return Post('{self.caption}','{self.picture}','{self.date_posted}')
 
 
 @login_manager.user_loader
@@ -97,7 +107,6 @@ def notes():
 
 
 @app.route("/posts" )
-@login_required
 def index():
 
     posts = Post.query.all()
@@ -105,7 +114,6 @@ def index():
     post_picture = Post.query.with_entities(Post.picture).all()
 
     posts.reverse()
-    print( posts)
     for t in post_picture:
         for x in t:
             out.append(x)
@@ -127,7 +135,7 @@ def register():
 
     if (form.validate_on_submit()):
         ##hashing passwords
-        hashed_pwd = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        hashed_pwd = form.password.data
         user = User(username = form.username.data ,email = form.email.data, password = hashed_pwd)
         u = form.username.data
         e = form.email.data
@@ -140,7 +148,7 @@ def register():
             db.session.add(user)
             db.session.commit()
 
-            flash(f'Your account has been created, Login!' , 'success')
+            flash('Your account has been created, Login!' , 'success')
             return redirect(url_for('login'))
 
 
@@ -160,7 +168,7 @@ def login():
     form = LoginForm()
     if (form.validate_on_submit() ):
         user = User.query.filter_by(email = form.email.data).first()
-        if(user and bcrypt.check_password_hash(user.password , form.password.data)):
+        if(user and (user.password == form.password.data)):
             login_user(user , remember = False)
             next_page = request.args.get('next')
             return redirect(next_page) if (next_page) else (redirect(url_for('index')))
@@ -220,15 +228,17 @@ def account_of_users():
 
 
 class UploadForm(FlaskForm):
-    caption = StringField('Caption' , validators = [DataRequired() , Length(min = 1, max = 100)])
-    image_url = FileField('Image File' , validators = [DataRequired()])
+    title = StringField('Title',validators = [DataRequired() , Length(min = 1, max = 300)])
+    caption = StringField('Write-Up' , widget = TextArea())
+    image_url = FileField('Image File')
     submit = SubmitField ("Upload")
 
 
 
 
 def save_picture(form_picture):
-    hashed_caption = secrets.token_hex(8)
+    hashed_caption = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(32)])
+
     f_name,f_ext = os.path.splitext(form_picture.filename)
     fn = hashed_caption+f_name
     picture_fn = fn + f_ext
@@ -241,14 +251,21 @@ def save_picture(form_picture):
 @login_required
 def upload_new():
     form = UploadForm()
+    pic_list = ["blog_pic.png","blog_pic2.jpg","blog_pic3.png","blog_pic4.png","blog_pic5.jpg"]
 
     if (form.validate_on_submit()):
         c = form.caption.data
+        t = form.title.data
         img = form.image_url.data
+        if ( img == ""):
+            picture_file = random.choice(pic_list)
+        else:
+            picture_file = save_picture(form.image_url.data)
 
-        picture_file = save_picture(form.image_url.data)
+
+
         print("done")
-        newFile = Post(caption = c , picture = picture_file  ,author = current_user.username,user_personal_id = current_user.id )
+        newFile = Post(title = t , caption = c , picture = picture_file  ,author = current_user.username, user_personal_id = current_user.id )
         db.session.add(newFile)
         db.session.commit()
         return redirect(url_for('index'))
@@ -262,21 +279,29 @@ def upload_new():
 def image_gallery():
     id_of_user = current_user.id
     posts_ = Post.query.filter_by(user_personal_id = id_of_user).all()
-    out_ = []
-    post__picture = Post.query.with_entities(Post.picture).all()
+
+
 
     posts_.reverse()
-    print( posts_)
-    for t in post__picture:
-        for x in t:
-            out_.append(x)
 
-    out_.reverse()
 
-    return render_template('image_gallery.html', posts = posts_ , post_picture = out_ )
+    print()
+
+
+
+    return render_template('image_gallery.html', posts = posts_ )
+
+
+
+
+
+
+
 
 
 
 
 if __name__ == '__main__':
     app.run(debug= True)
+
+
