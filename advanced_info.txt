@@ -1,0 +1,10 @@
+Keeping this simple, you can see in the py file, there is no password hashing involved here! Neither in Login or Register. 
+However this is not the same as in case of the main website https://artistshub0site.pythonanywhere.com
+
+The main site has a password hashing tool that is developed by me, but it still needs some additional functions, which is again one of the reasons why i have not included any forgot password functionality in the production server.
+
+I feel that, this is actually incomplete in its truest form - ideally which i thought to make it but simply discontinued because i saw it gaining no traction at all as for the community for whom i made it in the first place.
+You may see some additional styles tags that i used to experiment with the UI, you may try to do so with it too.
+
+For any info- Do contact me!
+email - rohitmadrileno@gmail.com
