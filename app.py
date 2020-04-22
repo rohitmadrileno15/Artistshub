@@ -20,35 +20,13 @@ from flask_login import LoginManager, UserMixin, login_user,current_user,logout_
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = '450933c08c5ab75e79619102eddf47dee813a9d6'
+app.config['SECRET_KEY'] = 'SECRET'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 
 db = SQLAlchemy(app)
 
-bcrypt = Bcrypt(app)
-
 login_manager = LoginManager(app)
-
-
-
-#posts = [
-#    {
-    #    'author': 'Rohit Saha',
-    #    'title': 'Blog Post 1',
-    #    'content': 'First post content',
-    #    'date_posted': 'April 20, 2018'
-#    },
-#    {
-    #    'author': 'Anonymous',
-        #'title': 'Blog Post 2',
-        #'content': 'Second post content',
-        #'date_posted': 'April 21, 2018'
-    #}
-#]
-
-
-
 
 
 
@@ -58,7 +36,6 @@ class User(db.Model , UserMixin):
     email = db.Column(db.String(120), unique= True, nullable = False)
 
     password = db.Column(db.String(60), nullable = False)
-    #posts = db.relationship("Post", backref = 'author' , lazy = True)
 
 
     def __repr__(self):
@@ -296,30 +273,7 @@ def image_gallery():
 
     out_.reverse()
 
-
-    print()
-
-
-
     return render_template('image_gallery.html', posts = posts_ , post_picture = out_ )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
