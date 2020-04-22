@@ -9,7 +9,6 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
 body {
@@ -406,7 +405,46 @@ section.body {
   }
 }
 </style>
+<style>
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
 
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+</style>
 </head>
 <body>
   <div class="topnav" id="myTopnav">
@@ -419,41 +457,56 @@ section.body {
     </a>
   </div>
 
-
+<h3>
+<h1 class="display-4">myspace</h1>
+</h3>
 <div class = 'container' style="padding-left:30px">
 <br>
 <br>
-
-
-
 <div class="row">
 
 
   {% for post in posts %}
 
-{% set item_1 = posts[loop.index-1]%}
-{% set item_2 = post_picture[loop.index-1]%}
 
     <div class="col-md-4">
       <div class="thumbnail">
-        <a href="#">
-          <img src="{{url_for('static', filename = item_2 ) }}" alt="Lights" style="width:100%">
+        <a>
+          <img src="{{url_for('static', filename = post.picture ) }}" alt="Lights" style="width:100%">
+         <h3> <strong>  {{  post.title }}  </strong> </h3>
           <div class="caption">
-            <p> {{  item_1.caption }} </p>
+
+
+  <p class="mb-0">{{  post.caption }}</p>
+
           </div>
+
         </a>
-        <p class="card-text"><small class="text-muted">{{  item_1.date_posted.strftime('%Y-%m-%d')}}</small></p>
+        <p class="card-text"><small class="text-muted">{{  post.date_posted.strftime('%Y-%m-%d')}}</small></p>
       </div>
     </div>
 
       {% endfor %}
 
-     
+
 
 
   </div>
+  <body style="text-align:center;">
 
 
+
+
+<br>
+<br>
+<p>
+    <h3> Go back to
+    <a href="/account_user">
+        account
+    </a>
+    </h3>
+</p>
+<br>
 </div>
 <script>
 function myFunction() {
